@@ -11,7 +11,7 @@ function App() {
     setIsAccepted(true);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://silly-1-6zfv.onrender.com';
       await fetch(`${apiUrl}/api/respond`, {
         method: 'POST',
         headers: {

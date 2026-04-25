@@ -7,7 +7,7 @@ const AdminView = () => {
   useEffect(() => {
     const fetchResponses = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://silly-1-6zfv.onrender.com';
         const res = await fetch(`${apiUrl}/api/admin/responses`);
         const data = await res.json();
         setResponses(data);
@@ -21,7 +21,7 @@ const AdminView = () => {
     fetchResponses();
   }, []);
 
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://silly-1-6zfv.onrender.com';
 
   return (
     <div style={{

@@ -22,7 +22,7 @@ const SuccessView = () => {
     });
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://silly-1-6zfv.onrender.com';
       const response = await fetch(`${apiUrl}/api/upload-photos`, {
         method: 'POST',
         body: formData,
