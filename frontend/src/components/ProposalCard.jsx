@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 const MESSAGES = [
   "Will you be my girlfriend?",
@@ -11,16 +11,22 @@ const MESSAGES = [
 const ProposalCard = ({ onYes }) => {
   const [hoverCount, setHoverCount] = useState(0);
   const [noButtonStyle, setNoButtonStyle] = useState({ position: 'relative' });
+  const startTimeRef = useRef(Date.now());
+
 
   const handleNoHover = () => {
     setHoverCount(prev => prev + 1);
     
-    // Calculate random position within constraints
-    const maxX = window.innerWidth / 2 - 100;
-    const maxY = window.innerHeight / 2 - 100;
+    // Calculate a strict bounding box inside the card.
+    // The button group is at the bottom, so we bias the jump UPWARDS (negative Y).
+    // X stays within +/- 100px from the center.
+    const signX = Math.random() > 0.5 ? 1 : -1;
     
-    const randomX = Math.floor(Math.random() * maxX * 2) - maxX;
-    const randomY = Math.floor(Math.random() * maxY * 2) - maxY;
+    // Jump between 40px and 100px left or right
+    const randomX = signX * (40 + Math.random() * 60);
+    
+    // Jump between 120px UP (-120) and 20px DOWN (+20)
+    const randomY = (Math.random() * 140) - 120;
 
     setNoButtonStyle({
       position: 'absolute',
@@ -47,6 +53,12 @@ const ProposalCard = ({ onYes }) => {
 
   const memeImage = getMemeImage();
 
+  // Handle Yes click, calculate time spent chasing No button
+  const handleYesClick = () => {
+    const timeSpent = Date.now() - startTimeRef.current;
+    onYes(timeSpent);
+  };
+
   return (
     <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       {memeImage && (
@@ -60,7 +72,7 @@ const ProposalCard = ({ onYes }) => {
       </h1>
       
       <div className="button-group" style={{ width: '100%' }}>
-        <button className="btn-yes" onClick={onYes}>
+    <button className="btn-yes" onClick={handleYesClick}>
           Yes
         </button>
         <button 

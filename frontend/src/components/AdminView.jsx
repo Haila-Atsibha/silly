@@ -54,9 +54,16 @@ const AdminView = () => {
               borderLeft: resp.type === 'photos_uploaded' ? '5px solid #4caf50' : '5px solid #ffb6c1'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                <strong>
-                  {resp.type === 'photos_uploaded' ? '📸 Photos Uploaded' : '💖 Said YES!'}
-                </strong>
+                <div>
+                  <strong>
+                    {resp.type === 'photos_uploaded' ? '📸 Photos Uploaded' : '💖 Said YES!'}
+                  </strong>
+                  {resp.type === 'said_yes' && resp.files && resp.files[0] && (
+                    <span style={{ marginLeft: '10px', color: '#d81b60', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                      (Chased "No" for {(parseInt(resp.files[0]) / 1000).toFixed(1)}s)
+                    </span>
+                  )}
+                </div>
                 <span style={{ color: '#666', fontSize: '0.9rem' }}>
                   {new Date(resp.timestamp).toLocaleString()}
                 </span>

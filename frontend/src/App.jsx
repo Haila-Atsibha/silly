@@ -6,8 +6,17 @@ import AdminView from './components/AdminView';
 
 function App() {
   const [isAccepted, setIsAccepted] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+  const [isFadingOut, setIsFadingOut] = useState(false);
 
-  const handleYes = async () => {
+  const handleContinue = () => {
+    setIsFadingOut(true);
+    setTimeout(() => {
+      setShowSplash(false);
+    }, 1000);
+  };
+
+  const handleYes = async (timeSpent) => {
     setIsAccepted(true);
 
     try {
@@ -17,7 +26,7 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ answer: 'YES' }),
+        body: JSON.stringify({ answer: 'YES', timeSpent }),
       });
     } catch (error) {
       console.error('Error saving response:', error);
@@ -33,7 +42,22 @@ function App() {
   return (
     <div className="app-container">
       <HeartBackground />
-      {isAccepted ? (
+      {showSplash ? (
+        <div className={`splash-container ${isFadingOut ? 'fade-out' : ''}`}>
+          <img 
+            src="/photo_2026-04-28_10-48-51.jpg" 
+            alt="Welcome" 
+            style={{ maxWidth: '90vw', maxHeight: '60vh', objectFit: 'contain', borderRadius: '15px', marginBottom: '2rem', boxShadow: '0 4px 15px rgba(0,0,0,0.2)' }} 
+          />
+          <button 
+            className="btn-yes" 
+            style={{ padding: '1rem 2rem', fontSize: '1.2rem', cursor: 'pointer' }}
+            onClick={handleContinue}
+          >
+            Click to continue 💖
+          </button>
+        </div>
+      ) : isAccepted ? (
         <SuccessView />
       ) : (
         <ProposalCard onYes={handleYes} />
