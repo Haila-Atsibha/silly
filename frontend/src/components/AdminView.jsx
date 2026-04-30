@@ -11,41 +11,55 @@ const AdminView = () => {
         const res = await fetch(`${apiUrl}/api/admin/responses`);
         const data = await res.json();
         
-        // Group by IP
-        const grouped = data.reduce((acc, curr) => {
-          if (!acc[curr.ip]) {
-            acc[curr.ip] = {
-              ip: curr.ip,
-              timestamp: curr.timestamp, // latest timestamp
+        // Sort data chronologically to build sessions based on time proximity
+        const sortedData = [...data].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+        
+        const sessions = [];
+        let currentSession = null;
+        
+        sortedData.forEach(curr => {
+          const currTime = new Date(curr.timestamp).getTime();
+          
+          // If no session exists, or this event happened more than 15 minutes after the session STARTED, make a new session
+          if (!currentSession || (currTime - new Date(currentSession.timestamp).getTime() > 900000)) {
+            currentSession = {
+              timestamp: curr.timestamp, // start time of this session
+              lastEventTime: curr.timestamp,
               said_yes: null,
               photos: [],
-              phone: null,
+              phones: [], // keep an array of all phone numbers submitted
               social_clicks: [],
               video_progress: null
             };
+            sessions.push(currentSession);
+          } else {
+            // Update the last event time to keep the session alive
+            currentSession.lastEventTime = curr.timestamp;
           }
           
           const files = curr.files || [];
           
           if (curr.type === 'said_yes') {
-            acc[curr.ip].said_yes = files[0] || null;
+            currentSession.said_yes = files[0] || null;
           } else if (curr.type === 'photos_uploaded') {
-            acc[curr.ip].photos = [...acc[curr.ip].photos, ...files];
+            currentSession.photos = [...currentSession.photos, ...files];
           } else if (curr.type === 'phone_submitted') {
-            acc[curr.ip].phone = files[0] || null;
+            if (files[0] && !currentSession.phones.includes(files[0])) {
+              currentSession.phones.push(files[0]);
+            }
           } else if (curr.type === 'social_click') {
-            if (files[0] && !acc[curr.ip].social_clicks.includes(files[0])) {
-              acc[curr.ip].social_clicks.push(files[0]);
+            if (files[0] && !currentSession.social_clicks.includes(files[0])) {
+              currentSession.social_clicks.push(files[0]);
             }
           } else if (curr.type === 'video_progress') {
             const currentProgress = parseFloat(files[0] || '0');
-            const existingProgress = parseFloat(acc[curr.ip].video_progress || '0');
-            acc[curr.ip].video_progress = Math.max(existingProgress, currentProgress);
+            const existingProgress = parseFloat(currentSession.video_progress || '0');
+            currentSession.video_progress = Math.max(existingProgress, currentProgress);
           }
-          return acc;
-        }, {});
+        });
         
-        setGroupedResponses(Object.values(grouped));
+        // Show newest sessions at the top
+        setGroupedResponses(sessions.reverse());
       } catch (error) {
         console.error('Failed to fetch responses:', error);
       } finally {
@@ -88,8 +102,10 @@ const AdminView = () => {
               borderLeft: '5px solid #d81b60'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem', borderBottom: '1px solid #ddd', paddingBottom: '0.8rem' }}>
-                <h3 style={{ color: '#333', margin: 0 }}>Visitor (IP: {person.ip || 'Unknown'})</h3>
-                <span style={{ color: '#666', fontSize: '0.9rem' }}>
+                <h3 style={{ color: '#333', margin: 0 }}>
+                  Visitor Session
+                </h3>
+                <span style={{ color: '#666', fontSize: '0.9rem', fontWeight: '500' }}>
                   {new Date(person.timestamp).toLocaleString()}
                 </span>
               </div>
@@ -101,9 +117,9 @@ const AdminView = () => {
                   </div>
                 )}
                 
-                {person.phone && (
+                {person.phones && person.phones.length > 0 && (
                   <div>
-                    <strong>📱 Phone Number:</strong> <span style={{ color: '#2196f3', fontWeight: 'bold' }}>{person.phone}</span>
+                    <strong>📱 Phone Number(s):</strong> <span style={{ color: '#2196f3', fontWeight: 'bold' }}>{person.phones.join(', ')}</span>
                   </div>
                 )}
 
