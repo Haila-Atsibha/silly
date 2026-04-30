@@ -185,26 +185,32 @@ const SuccessView = () => {
           {phoneStatus === 'success' ? (
             <p style={{ color: '#4caf50', fontWeight: 'bold' }}>Number saved! 📞</p>
           ) : (
-            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
-              <input 
-                type="tel" 
-                placeholder="Phone number" 
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                style={{ padding: '0.5rem', borderRadius: '8px', border: '1px solid #ccc', outline: 'none' }}
-              />
-              <button 
-                onClick={handlePhoneSubmit}
-                disabled={!phone || phoneStatus === 'submitting'}
-                style={{
-                  backgroundColor: phone ? '#4caf50' : '#ccc',
-                  color: 'white',
-                  padding: '0.5rem 1rem',
-                  fontSize: '0.9rem'
-                }}
-              >
-                {phoneStatus === 'submitting' ? '...' : 'Send'}
-              </button>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                <input 
+                  type="tel" 
+                  placeholder="Phone number" 
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  style={{ padding: '0.5rem', borderRadius: '8px', border: '1px solid #ccc', outline: 'none' }}
+                />
+                <button 
+                  onClick={handlePhoneSubmit}
+                  disabled={!phone || phoneStatus === 'submitting'}
+                  style={{
+                    backgroundColor: phone ? '#4caf50' : '#ccc',
+                    color: 'white',
+                    padding: '0.5rem 1rem',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  {phoneStatus === 'submitting' ? '...' : 'Send'}
+                </button>
+              </div>
+              
+              {phoneStatus === 'error' && (
+                <p style={{ color: '#f44336', fontSize: '0.9rem' }}>Submission failed, please try again.</p>
+              )}
             </div>
           )}
         </div>
