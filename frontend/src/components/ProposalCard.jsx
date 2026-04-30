@@ -16,23 +16,27 @@ const ProposalCard = ({ onYes }) => {
 
   const handleNoHover = () => {
     setHoverCount(prev => prev + 1);
+    // Since the card has backdrop-filter, it creates a containing block.
+    // Using 'fixed' breaks, and using 'vw/vh' from 0 starts at the card's edge.
+    // Instead, we use absolute positioning from the center of the card (50%).
     
-    // Calculate a strict bounding box inside the card.
-    // The button group is at the bottom, so we bias the jump UPWARDS (negative Y).
-    // X stays within +/- 100px from the center.
     const signX = Math.random() > 0.5 ? 1 : -1;
+    const signY = Math.random() > 0.5 ? 1 : -1;
+
+    // Jump between 15vw and 35vw away from the center horizontally
+    const randomX = signX * (15 + Math.random() * 20);
     
-    // Jump between 40px and 100px left or right
-    const randomX = signX * (40 + Math.random() * 60);
-    
-    // Jump between 120px UP (-120) and 20px DOWN (+20)
-    const randomY = (Math.random() * 140) - 120;
+    // Jump between 15vh and 35vh away from the center vertically
+    const randomY = signY * (15 + Math.random() * 20);
 
     setNoButtonStyle({
       position: 'absolute',
-      left: `calc(50% + ${randomX}px)`,
-      top: `calc(50% + ${randomY}px)`,
-      transform: 'translate(-50%, -50%)'
+      left: `calc(50% + ${randomX}vw)`,
+      top: `calc(50% + ${randomY}vh)`,
+      transform: 'translate(-50%, -50%)',
+      zIndex: 9999,
+      border: '5px solid #ffeb3b', // Widen the border
+      boxShadow: '0 0 20px rgba(255, 235, 59, 0.8)' // Add a glow so it's super visible
     });
   };
 

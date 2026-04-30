@@ -93,6 +93,7 @@ button {
   color: white;
   box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
   position: absolute; /* Needed for jumping around */
+  border: 3px solid #ffeb3b; /* Another border for it to stand out */
 }
 
 /* Heart Animation */
@@ -162,4 +163,21 @@ button {
 .splash-container.fade-out {
   opacity: 0;
   transform: scale(1.1);
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); opacity: 1; }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translate3d(0, -100%, 0);
+    visibility: visible;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
 }

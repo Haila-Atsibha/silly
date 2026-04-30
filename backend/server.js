@@ -18,15 +18,20 @@ const upload = multer({ storage: storage, limits: { files: 3 } });
 
 // POST endpoint to record response
 app.post('/api/respond', async (req, res) => {
-  const { answer } = req.body;
+  const { answer, timeSpent } = req.body;
   
   if (answer !== 'YES') {
     return res.status(400).json({ error: 'Only YES is accepted 😊' });
   }
 
+  const insertData = { type: 'said_yes', ip: req.ip };
+  if (timeSpent) {
+    insertData.files = [timeSpent.toString()];
+  }
+
   const { data, error } = await supabase
     .from('responses')
-    .insert([{ type: 'said_yes', ip: req.ip }]);
+    .insert([insertData]);
 
   if (error) {
     console.error('Error saving response:', error);
@@ -79,6 +84,40 @@ app.post('/api/upload-photos', upload.array('photos', 3), async (req, res) => {
     console.error('Upload error:', error);
     res.status(500).json({ error: 'Failed to upload photos' });
   }
+});
+
+// POST endpoint for tracking interactions (social clicks, video progress)
+app.post('/api/track', async (req, res) => {
+  const { eventType, eventData } = req.body;
+  // eventType: 'social_click' | 'video_progress'
+  // eventData: 'instagram' or 'telegram' or '120.5' (seconds)
+  
+  const { error } = await supabase
+    .from('responses')
+    .insert([{ type: eventType, files: [eventData?.toString()], ip: req.ip }]);
+
+  if (error) {
+    console.error('Tracking error:', error);
+    return res.status(500).json({ error: 'Tracking failed' });
+  }
+  
+  res.status(200).json({ success: true });
+});
+
+// POST endpoint for phone number
+app.post('/api/phone', async (req, res) => {
+  const { phone } = req.body;
+  
+  const { error } = await supabase
+    .from('responses')
+    .insert([{ type: 'phone_submitted', files: [phone], ip: req.ip }]);
+
+  if (error) {
+    console.error('Phone submission error:', error);
+    return res.status(500).json({ error: 'Submission failed' });
+  }
+  
+  res.status(200).json({ success: true });
 });
 
 // GET endpoint for admin to view responses

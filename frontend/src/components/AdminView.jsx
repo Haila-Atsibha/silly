@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 const AdminView = () => {
-  const [responses, setResponses] = useState([]);
+  const [groupedResponses, setGroupedResponses] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -10,7 +10,42 @@ const AdminView = () => {
         const apiUrl = import.meta.env.VITE_API_URL || 'https://silly-1-6zfv.onrender.com';
         const res = await fetch(`${apiUrl}/api/admin/responses`);
         const data = await res.json();
-        setResponses(data);
+        
+        // Group by IP
+        const grouped = data.reduce((acc, curr) => {
+          if (!acc[curr.ip]) {
+            acc[curr.ip] = {
+              ip: curr.ip,
+              timestamp: curr.timestamp, // latest timestamp
+              said_yes: null,
+              photos: [],
+              phone: null,
+              social_clicks: [],
+              video_progress: null
+            };
+          }
+          
+          const files = curr.files || [];
+          
+          if (curr.type === 'said_yes') {
+            acc[curr.ip].said_yes = files[0] || null;
+          } else if (curr.type === 'photos_uploaded') {
+            acc[curr.ip].photos = [...acc[curr.ip].photos, ...files];
+          } else if (curr.type === 'phone_submitted') {
+            acc[curr.ip].phone = files[0] || null;
+          } else if (curr.type === 'social_click') {
+            if (files[0] && !acc[curr.ip].social_clicks.includes(files[0])) {
+              acc[curr.ip].social_clicks.push(files[0]);
+            }
+          } else if (curr.type === 'video_progress') {
+            const currentProgress = parseFloat(files[0] || '0');
+            const existingProgress = parseFloat(acc[curr.ip].video_progress || '0');
+            acc[curr.ip].video_progress = Math.max(existingProgress, currentProgress);
+          }
+          return acc;
+        }, {});
+        
+        setGroupedResponses(Object.values(grouped));
       } catch (error) {
         console.error('Failed to fetch responses:', error);
       } finally {
@@ -21,19 +56,18 @@ const AdminView = () => {
     fetchResponses();
   }, []);
 
-  const apiUrl = import.meta.env.VITE_API_URL || 'https://silly-1-6zfv.onrender.com';
-
   return (
     <div style={{
       width: '100%',
-      minHeight: '100vh',
+      height: '100vh',
       backgroundColor: '#fff',
       padding: '2rem',
       position: 'absolute',
       top: 0,
       left: 0,
       zIndex: 100,
-      overflowY: 'auto'
+      overflowY: 'auto',
+      boxSizing: 'border-box'
     }}>
       <h1 style={{ color: '#d81b60', marginBottom: '2rem', textAlign: 'center' }}>
         Secret Admin Dashboard 🕵️‍♂️
@@ -41,56 +75,77 @@ const AdminView = () => {
 
       {loading ? (
         <p style={{ textAlign: 'center' }}>Loading responses...</p>
-      ) : responses.length === 0 ? (
+      ) : groupedResponses.length === 0 ? (
         <p style={{ textAlign: 'center', color: '#666' }}>No responses yet.</p>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-          {responses.map((resp, index) => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', maxWidth: '800px', margin: '0 auto', paddingBottom: '4rem' }}>
+          {groupedResponses.map((person, index) => (
             <div key={index} style={{ 
               padding: '1.5rem', 
               borderRadius: '12px', 
               boxShadow: '0 4px 15px rgba(0,0,0,0.1)', 
               backgroundColor: '#fafafa',
-              borderLeft: resp.type === 'photos_uploaded' ? '5px solid #4caf50' : '5px solid #ffb6c1'
+              borderLeft: '5px solid #d81b60'
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                <div>
-                  <strong>
-                    {resp.type === 'photos_uploaded' ? '📸 Photos Uploaded' : '💖 Said YES!'}
-                  </strong>
-                  {resp.type === 'said_yes' && resp.files && resp.files[0] && (
-                    <span style={{ marginLeft: '10px', color: '#d81b60', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                      (Chased "No" for {(parseInt(resp.files[0]) / 1000).toFixed(1)}s)
-                    </span>
-                  )}
-                </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem', borderBottom: '1px solid #ddd', paddingBottom: '0.8rem' }}>
+                <h3 style={{ color: '#333', margin: 0 }}>Visitor (IP: {person.ip || 'Unknown'})</h3>
                 <span style={{ color: '#666', fontSize: '0.9rem' }}>
-                  {new Date(resp.timestamp).toLocaleString()}
+                  {new Date(person.timestamp).toLocaleString()}
                 </span>
               </div>
 
-              {resp.type === 'photos_uploaded' && resp.files && (
-                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '1rem' }}>
-                  {resp.files.map((file, i) => (
-                    <a key={i} href={file} target="_blank" rel="noreferrer">
-                      <img 
-                        src={file} 
-                        alt={`Upload ${i}`} 
-                        style={{ 
-                          width: '150px', 
-                          height: '150px', 
-                          objectFit: 'cover', 
-                          borderRadius: '8px',
-                          cursor: 'pointer',
-                          transition: 'transform 0.2s ease'
-                        }} 
-                        onMouseOver={e => e.currentTarget.style.transform = 'scale(1.05)'}
-                        onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
-                      />
-                    </a>
-                  ))}
-                </div>
-              )}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '1.05rem' }}>
+                {person.said_yes && (
+                  <div>
+                    <strong>💖 Said YES!</strong> <span style={{ color: '#666' }}>(Chased "No" for {(parseInt(person.said_yes) / 1000).toFixed(1)}s)</span>
+                  </div>
+                )}
+                
+                {person.phone && (
+                  <div>
+                    <strong>📱 Phone Number:</strong> <span style={{ color: '#2196f3', fontWeight: 'bold' }}>{person.phone}</span>
+                  </div>
+                )}
+
+                {person.social_clicks.length > 0 && (
+                  <div>
+                    <strong>🔗 Social Links Clicked:</strong> <span style={{ color: '#ff9800' }}>{person.social_clicks.join(', ')}</span>
+                  </div>
+                )}
+
+                {person.video_progress > 0 && (
+                  <div>
+                    <strong>🎵 Video Watched:</strong> <span style={{ color: '#9c27b0' }}>{(person.video_progress / 60).toFixed(2)} minutes</span>
+                  </div>
+                )}
+
+                {person.photos.length > 0 && (
+                  <div style={{ marginTop: '0.5rem' }}>
+                    <strong>📸 Uploaded Photos:</strong>
+                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+                      {person.photos.map((file, i) => (
+                        <a key={i} href={file} target="_blank" rel="noreferrer">
+                          <img 
+                            src={file} 
+                            alt={`Upload ${i}`} 
+                            style={{ 
+                              width: '120px', 
+                              height: '120px', 
+                              objectFit: 'cover', 
+                              borderRadius: '8px',
+                              cursor: 'pointer',
+                              transition: 'transform 0.2s ease',
+                              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                            }} 
+                            onMouseOver={e => e.currentTarget.style.transform = 'scale(1.05)'}
+                            onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                          />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           ))}
         </div>
