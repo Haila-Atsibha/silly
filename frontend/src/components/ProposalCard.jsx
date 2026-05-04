@@ -3,9 +3,9 @@ import React, { useState, useRef } from 'react';
 const MESSAGES = [
   "Will you be my girlfriend?",
   "Are you sure?",
-  "Really sure?",
-  "Don't do this 😢",
-  "Just press yes already ❤️"
+  "so u are chasing no good luck",
+  "give up already",
+  "just say yes"
 ];
 
 const ProposalCard = ({ onYes }) => {
@@ -41,17 +41,19 @@ const ProposalCard = ({ onYes }) => {
   };
 
   const getHeadingText = () => {
-    if (hoverCount >= MESSAGES.length) {
+    const index = Math.floor(hoverCount / 3);
+    if (index >= MESSAGES.length) {
       return "Don't play with me 😼";
     }
-    return MESSAGES[hoverCount];
+    return MESSAGES[index];
   };
 
   const getMemeImage = () => {
-    if (hoverCount === 0) return null;
-    if (hoverCount === 1 || hoverCount === 2) return "/crying_guy.jpg";
-    if (hoverCount === 3 || hoverCount === 4) return "/crying_cat.jpg";
-    if (hoverCount >= 5) return "/angry.jpg";
+    const index = Math.floor(hoverCount / 3);
+    if (index === 0) return null;
+    if (index === 1 || index === 2) return "/crying_guy.jpg";
+    if (index === 3 || index === 4) return "/crying_cat.jpg";
+    if (index >= 5) return "/angry.jpg";
     return null;
   };
 
