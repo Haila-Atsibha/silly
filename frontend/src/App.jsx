@@ -65,7 +65,7 @@ function App() {
       ) : stage === 1 ? (
         <div className="splash-container" style={{ animation: 'bounceIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}>
           <h1 style={{ fontSize: '3rem', color: '#d81b60', marginBottom: '2rem', animation: 'slideInDown 0.8s ease-out' }}>
-            I just wanted to say...
+            you are so cute I just wanted to say...
           </h1>
           <video 
             src="/friends-joey-how%20you%20doin.mp4" 

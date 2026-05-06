@@ -14,29 +14,55 @@ const ProposalCard = ({ onYes }) => {
   const startTimeRef = useRef(Date.now());
 
 
-  const handleNoHover = () => {
+  const handleNoHover = (e) => {
     setHoverCount(prev => prev + 1);
-    // Since the card has backdrop-filter, it creates a containing block.
-    // Using 'fixed' breaks, and using 'vw/vh' from 0 starts at the card's edge.
-    // Instead, we use absolute positioning from the center of the card (50%).
-    
-    const signX = Math.random() > 0.5 ? 1 : -1;
-    const signY = Math.random() > 0.5 ? 1 : -1;
 
-    // Jump between 15vw and 35vw away from the center horizontally
-    const randomX = signX * (15 + Math.random() * 20);
-    
-    // Jump between 15vh and 35vh away from the center vertically
-    const randomY = signY * (15 + Math.random() * 20);
+    const winW = window.innerWidth;
+    const winH = window.innerHeight;
+
+    const btnW = e.target.offsetWidth || 100;
+    const btnH = e.target.offsetHeight || 50;
+
+    const btnGroup = e.target.closest('.button-group');
+    let groupLeft = 0;
+    let groupTop = 0;
+    if (btnGroup) {
+      const rect = btnGroup.getBoundingClientRect();
+      groupLeft = rect.left;
+      groupTop = rect.top;
+    }
+
+    const margin = 30; // pixels from the edge of the screen
+    const minScreenX = Math.max(margin, 0);
+    const maxScreenX = Math.max(margin, winW - btnW - margin);
+    const minScreenY = Math.max(margin, 0);
+    const maxScreenY = Math.max(margin, winH - btnH - margin);
+
+    const btnRect = e.target.getBoundingClientRect();
+    const currentScreenX = btnRect.left;
+    const currentScreenY = btnRect.top;
+
+    let randomScreenX, randomScreenY;
+    let attempts = 0;
+
+    // Pick a new position at least 100px away from the mouse
+    do {
+      randomScreenX = minScreenX + Math.random() * (maxScreenX - minScreenX);
+      randomScreenY = minScreenY + Math.random() * (maxScreenY - minScreenY);
+      attempts++;
+    } while (
+      attempts < 10 &&
+      Math.abs(randomScreenX - currentScreenX) < 100 &&
+      Math.abs(randomScreenY - currentScreenY) < 100
+    );
 
     setNoButtonStyle({
       position: 'absolute',
-      left: `calc(50% + ${randomX}vw)`,
-      top: `calc(50% + ${randomY}vh)`,
-      transform: 'translate(-50%, -50%)',
+      left: `${randomScreenX - groupLeft}px`,
+      top: `${randomScreenY - groupTop}px`,
       zIndex: 9999,
-      border: '5px solid #ffeb3b', // Widen the border
-      boxShadow: '0 0 20px rgba(255, 235, 59, 0.8)' // Add a glow so it's super visible
+      border: '5px solid #ffeb3b',
+      boxShadow: '0 0 20px rgba(255, 235, 59, 0.8)'
     });
   };
 

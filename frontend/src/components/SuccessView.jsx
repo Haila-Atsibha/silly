@@ -191,7 +191,7 @@ const SuccessView = () => {
                   type="tel" 
                   placeholder="Phone number" 
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => setPhone(e.target.value.replace(/[^0-9+]/g, ''))}
                   style={{ padding: '0.5rem', borderRadius: '8px', border: '1px solid #ccc', outline: 'none' }}
                 />
                 <button 
