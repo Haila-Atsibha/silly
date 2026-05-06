@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Confetti from 'react-confetti';
-import { Instagram, Send } from 'lucide-react';
 
 const SuccessView = () => {
   const [files, setFiles] = useState([]);
@@ -175,10 +174,12 @@ const SuccessView = () => {
           </p>
           <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', marginBottom: '1rem' }}>
             <a href="https://instagram.com/haileiyesus133" target="_blank" rel="noreferrer" onClick={() => handleSocialClick('instagram')} style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: '#E1306C', fontWeight: 'bold' }}>
-              <Instagram size={20} /> Instagram
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+              Instagram
             </a>
             <a href="https://t.me/HMA133" target="_blank" rel="noreferrer" onClick={() => handleSocialClick('telegram')} style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: '#0088cc', fontWeight: 'bold' }}>
-              <Send size={20} /> Telegram
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13"></path><path d="M22 2L15 22L11 13L2 9L22 2Z"></path></svg>
+              Telegram
             </a>
           </div>
           
