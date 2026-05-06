@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Confetti from 'react-confetti';
+import { Instagram, Send } from 'lucide-react';
 
 const SuccessView = () => {
   const [files, setFiles] = useState([]);
@@ -172,12 +173,12 @@ const SuccessView = () => {
           <p style={{ fontWeight: '600', marginBottom: '1rem', color: '#d81b60' }}>
             Contact me here:
           </p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '1rem' }}>
-            <a href="https://instagram.com/haileiyesus133" target="_blank" rel="noreferrer" onClick={() => handleSocialClick('instagram')} style={{ textDecoration: 'none', color: '#E1306C', fontWeight: 'bold' }}>
-              📸 Instagram
+          <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', marginBottom: '1rem' }}>
+            <a href="https://instagram.com/haileiyesus133" target="_blank" rel="noreferrer" onClick={() => handleSocialClick('instagram')} style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: '#E1306C', fontWeight: 'bold' }}>
+              <Instagram size={20} /> Instagram
             </a>
-            <a href="https://t.me/HMA133" target="_blank" rel="noreferrer" onClick={() => handleSocialClick('telegram')} style={{ textDecoration: 'none', color: '#0088cc', fontWeight: 'bold' }}>
-              ✈️ Telegram
+            <a href="https://t.me/HMA133" target="_blank" rel="noreferrer" onClick={() => handleSocialClick('telegram')} style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: '#0088cc', fontWeight: 'bold' }}>
+              <Send size={20} /> Telegram
             </a>
           </div>
           
