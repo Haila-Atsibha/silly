@@ -27,7 +27,7 @@ const AdminView = () => {
               lastEventTime: curr.timestamp,
               said_yes: null,
               photos: [],
-              phones: [], // keep an array of all phone numbers submitted
+              comments: [], // keep an array of all comments submitted
               social_clicks: [],
               video_progress: null
             };
@@ -43,9 +43,9 @@ const AdminView = () => {
             currentSession.said_yes = files[0] || null;
           } else if (curr.type === 'photos_uploaded') {
             currentSession.photos = [...currentSession.photos, ...files];
-          } else if (curr.type === 'phone_submitted') {
-            if (files[0] && !currentSession.phones.includes(files[0])) {
-              currentSession.phones.push(files[0]);
+          } else if (curr.type === 'comment_submitted') {
+            if (files[0] && !currentSession.comments.includes(files[0])) {
+              currentSession.comments.push(files[0]);
             }
           } else if (curr.type === 'social_click') {
             if (files[0] && !currentSession.social_clicks.includes(files[0])) {
@@ -117,9 +117,14 @@ const AdminView = () => {
                   </div>
                 )}
                 
-                {person.phones && person.phones.length > 0 && (
+                {person.comments && person.comments.length > 0 && (
                   <div>
-                    <strong>📱 Phone Number(s):</strong> <span style={{ color: '#2196f3', fontWeight: 'bold' }}>{person.phones.join(', ')}</span>
+                    <strong>💬 Comment(s):</strong>
+                    <div style={{ color: '#2196f3', fontWeight: 'bold', marginTop: '0.35rem', whiteSpace: 'pre-wrap' }}>
+                      {person.comments.map((comment, idx) => (
+                        <div key={idx} style={{ marginBottom: '0.5rem' }}>{comment}</div>
+                      ))}
+                    </div>
                   </div>
                 )}
 

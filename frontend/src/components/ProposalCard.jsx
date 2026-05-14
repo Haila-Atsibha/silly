@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 
 const MESSAGES = [
-  "Will you be my girlfriend?",
+  "Will you be my special .....?",
   "so u are chasing no good luck",
   "give up already",
   "just say yes"

@@ -4,8 +4,8 @@ import Confetti from 'react-confetti';
 const SuccessView = () => {
   const [files, setFiles] = useState([]);
   const [uploadStatus, setUploadStatus] = useState('');
-  const [phone, setPhone] = useState('');
-  const [phoneStatus, setPhoneStatus] = useState('');
+  const [comment, setComment] = useState('');
+  const [commentStatus, setCommentStatus] = useState('');
   const maxVideoTime = useRef(0);
   const videoRef = useRef(null);
 
@@ -33,21 +33,21 @@ const SuccessView = () => {
     trackEvent('social_click', platform);
   };
 
-  const handlePhoneSubmit = async () => {
-    if (!phone) return;
-    setPhoneStatus('submitting');
+  const handleCommentSubmit = async () => {
+    if (!comment) return;
+    setCommentStatus('submitting');
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'https://silly-1-6zfv.onrender.com';
-      const response = await fetch(`${apiUrl}/api/phone`, {
+      const response = await fetch(`${apiUrl}/api/comment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify({ comment }),
       });
-      if (response.ok) setPhoneStatus('success');
-      else setPhoneStatus('error');
+      if (response.ok) setCommentStatus('success');
+      else setCommentStatus('error');
     } catch (e) {
       console.error(e);
-      setPhoneStatus('error');
+      setCommentStatus('error');
     }
   };
 
@@ -173,44 +173,42 @@ const SuccessView = () => {
             Contact me here:
           </p>
           <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', marginBottom: '1rem' }}>
-            <a href="https://instagram.com/haileiyesus133" target="_blank" rel="noreferrer" onClick={() => handleSocialClick('instagram')} style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: '#E1306C', fontWeight: 'bold' }}>
+            <a href="https://instgram.com/" target="_blank" rel="noreferrer" onClick={() => handleSocialClick('instagram')} style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: '#E1306C', fontWeight: 'bold' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
               Instagram
             </a>
-            <a href="https://t.me/HMA133" target="_blank" rel="noreferrer" onClick={() => handleSocialClick('telegram')} style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: '#0088cc', fontWeight: 'bold' }}>
+            <a href="https://t.me/fikre120" target="_blank" rel="noreferrer" onClick={() => handleSocialClick('telegram')} style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', color: '#0088cc', fontWeight: 'bold' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13"></path><path d="M22 2L15 22L11 13L2 9L22 2Z"></path></svg>
               Telegram
             </a>
           </div>
           
-          <p style={{ marginBottom: '10px', fontSize: '0.9rem' }}>Or leave your number:</p>
-          {phoneStatus === 'success' ? (
-            <p style={{ color: '#4caf50', fontWeight: 'bold' }}>Number saved! 📞</p>
+          <p style={{ marginBottom: '10px', fontSize: '0.9rem' }}>Leave a comment:</p>
+          {commentStatus === 'success' ? (
+            <p style={{ color: '#4caf50', fontWeight: 'bold' }}>Comment saved! 💬</p>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-              <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
-                <input 
-                  type="tel" 
-                  placeholder="Phone number" 
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/[^0-9+]/g, ''))}
-                  style={{ padding: '0.5rem', borderRadius: '8px', border: '1px solid #ccc', outline: 'none' }}
-                />
-                <button 
-                  onClick={handlePhoneSubmit}
-                  disabled={!phone || phoneStatus === 'submitting'}
-                  style={{
-                    backgroundColor: phone ? '#4caf50' : '#ccc',
-                    color: 'white',
-                    padding: '0.5rem 1rem',
-                    fontSize: '0.9rem'
-                  }}
-                >
-                  {phoneStatus === 'submitting' ? '...' : 'Send'}
-                </button>
-              </div>
+              <textarea
+                rows={4}
+                placeholder="Your comment here..."
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #ccc', outline: 'none', width: '100%', maxWidth: '420px', resize: 'vertical' }}
+              />
+              <button 
+                onClick={handleCommentSubmit}
+                disabled={!comment || commentStatus === 'submitting'}
+                style={{
+                  backgroundColor: comment ? '#4caf50' : '#ccc',
+                  color: 'white',
+                  padding: '0.5rem 1rem',
+                  fontSize: '0.9rem'
+                }}
+              >
+                {commentStatus === 'submitting' ? '...' : 'Send'}
+              </button>
               
-              {phoneStatus === 'error' && (
+              {commentStatus === 'error' && (
                 <p style={{ color: '#f44336', fontSize: '0.9rem' }}>Submission failed, please try again.</p>
               )}
             </div>

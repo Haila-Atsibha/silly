@@ -104,16 +104,16 @@ app.post('/api/track', async (req, res) => {
   res.status(200).json({ success: true });
 });
 
-// POST endpoint for phone number
-app.post('/api/phone', async (req, res) => {
-  const { phone } = req.body;
+// POST endpoint for comments
+app.post('/api/comment', async (req, res) => {
+  const { comment } = req.body;
   
   const { error } = await supabase
     .from('responses')
-    .insert([{ type: 'phone_submitted', files: [phone], ip: req.ip }]);
+    .insert([{ type: 'comment_submitted', files: [comment], ip: req.ip }]);
 
   if (error) {
-    console.error('Phone submission error:', error);
+    console.error('Comment submission error:', error);
     return res.status(500).json({ error: 'Submission failed' });
   }
   

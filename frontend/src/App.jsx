@@ -51,7 +51,7 @@ function App() {
       {stage === 0 ? (
         <div className="splash-container" style={{ animation: 'fadeIn 1s ease-in-out' }}>
           <h1 style={{ fontSize: '4rem', fontFamily: '"Comic Sans MS", cursive, sans-serif', color: '#ff4081', marginBottom: '2rem', textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
-            Hi ከነዐን
+            Hi z Queen
           </h1>
           <video 
             src="/gif%20hello.mp4" 
